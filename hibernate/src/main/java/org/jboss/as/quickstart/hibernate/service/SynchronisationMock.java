@@ -25,12 +25,13 @@ public class SynchronisationMock {
   @Inject
   private Logger log;
 
-  @Resource(lookup = "java:/testdb")
+  @Resource(lookup = "java:/testdb2")
   private DataSource dataSource;
 
   public void doHibernate() throws NamingException {
     final ExecutorService managedExecutorService = (ExecutorService) new InitialContext().lookup(MANAGED_EXECUTOR_SERVICE);
     managedExecutorService.submit(() -> {
+      doConnecton();
       log.info("Create Session");
       try {
         final Session session = getSession();
