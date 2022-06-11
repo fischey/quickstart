@@ -32,7 +32,8 @@
 
          <p>
             <h:panelGrid columns="2">
-               <h:commandButton id="register" action="#{hibernateController.register}" value="Register" styleClass="register"/>
+               <h:commandButton id="hibernate" action="#{hibernateController.hibernate}" value="Hibernate" styleClass="register"/>
+               <h:commandButton id="connection" action="#{hibernateController.connection}" value="Connection" styleClass="register"/>
                <h:messages styleClass="messages" errorClass="invalid" infoClass="valid" warnClass="warning"
                            globalOnly="true"/>
             </h:panelGrid>

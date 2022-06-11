@@ -1,0 +1,6 @@
+# /subsystem=datasources/jdbc-driver=postgres:add(driver-name=postgres,driver-module-name=org.postgresql,driver-class-name="org.postgresql.Driver",driver-datasource-class-name="org.postgresql.ds.PGSimpleDataSource",driver-xa-datasource-class-name="org.postgresql.xa.PGXADataSource")
+
+xa-data-source add --name=testdb --user-name=postgres --password=password \
+--jndi-name=java:/testdb --driver-name=postgres --xa-datasource-properties={url="jdbc:postgres://localhost:5432/testdb"} \
+--transaction-isolation=TRANSACTION_READ_COMMITTED \
+--max-pool-size=20 --min-pool-size=5

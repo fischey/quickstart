@@ -33,42 +33,55 @@ import javax.inject.Inject;
 @Model
 public class HibernateController {
 
-    @Inject
-    private FacesContext facesContext;
+  @Inject
+  private FacesContext facesContext;
 
-    @Inject
-    private SynchronisationMock synchronisationMock;
+  @Inject
+  private SynchronisationMock synchronisationMock;
 
-    public void register() {
-        try {
-            synchronisationMock.doHibernate();
+  public void hibernate() {
+    try {
+      synchronisationMock.doHibernate();
 
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful"));
-        } catch (Exception e) {
-            String errorMessage = getRootErrorMessage(e);
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    errorMessage, "Registration unsuccessful"));
-        }
+      facesContext.addMessage(null,
+        new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful"));
+    } catch (Exception e) {
+      String errorMessage = getRootErrorMessage(e);
+      facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+        errorMessage, "Registration unsuccessful"));
+    }
+  }
+
+  public void connection() {
+    try {
+      synchronisationMock.doConnecton();
+
+      facesContext.addMessage(null,
+        new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful"));
+    } catch (Exception e) {
+      String errorMessage = getRootErrorMessage(e);
+      facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+        errorMessage, "Registration unsuccessful"));
+    }
+  }
+
+  private String getRootErrorMessage(Exception e) {
+    // Default to general error message that registration failed.
+    String errorMessage = "Registration failed. See server log for more information";
+    if (e == null) {
+      // This shouldn't happen, but return the default messages
+      return errorMessage;
     }
 
-    private String getRootErrorMessage(Exception e) {
-        // Default to general error message that registration failed.
-        String errorMessage = "Registration failed. See server log for more information";
-        if (e == null) {
-            // This shouldn't happen, but return the default messages
-            return errorMessage;
-        }
-
-        // Start with the exception and recurse to find the root cause
-        Throwable t = e;
-        while (t != null) {
-            // Get the message from the Throwable class instance
-            errorMessage = t.getLocalizedMessage();
-            t = t.getCause();
-        }
-        // This is the root cause message
-        return errorMessage;
+    // Start with the exception and recurse to find the root cause
+    Throwable t = e;
+    while (t != null) {
+      // Get the message from the Throwable class instance
+      errorMessage = t.getLocalizedMessage();
+      t = t.getCause();
     }
+    // This is the root cause message
+    return errorMessage;
+  }
 
 }
