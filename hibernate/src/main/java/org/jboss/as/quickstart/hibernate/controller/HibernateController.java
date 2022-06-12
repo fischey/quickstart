@@ -18,6 +18,8 @@ package org.jboss.as.quickstart.hibernate.controller;
 
 import org.jboss.as.quickstart.hibernate.service.SynchronisationMock;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -39,6 +41,7 @@ public class HibernateController {
   @Inject
   private SynchronisationMock synchronisationMock;
 
+  @TransactionAttribute(TransactionAttributeType.NEVER)
   public void hibernate() {
     try {
       synchronisationMock.doHibernate();

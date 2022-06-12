@@ -1,0 +1,32 @@
+# /subsystem=datasources/jdbc-driver=postgres:add(driver-name=postgres,driver-module-name=org.postgresql,driver-class-name="org.postgresql.Driver",driver-datasource-class-name="org.postgresql.ds.PGSimpleDataSource",driver-xa-datasource-class-name="org.postgresql.xa.PGXADataSource")
+
+xa-data-source remove --name=SYNCSOURCE-A-E-DS
+xa-data-source remove --name=SYNCSOURCE-B-E-DS
+
+xa-data-source add --name=SYNCSOURCE-A-E-DS --transaction-isolation=TRANSACTION_READ_COMMITTED \
+    --jndi-name="java:/SYNCSOURCE-A-E-DS" --driver-name=com.mysql.jdbc \
+    --max-pool-size=20 --min-pool-size=5 \
+    --credential-reference={store=ubi-credential-store, alias=gis-lokal-e-pw} \
+    --user-name=kanal_e \
+    --xa-datasource-properties=[URL=jdbc:mysql://localhost:3306/KANAL_E, DatabaseName=KANAL_E]
+
+xa-data-source add --name=SYNCSOURCE-B-E-DS --transaction-isolation=TRANSACTION_READ_COMMITTED \
+    --jndi-name="java:/SYNCSOURCE-B-E-DS" --driver-name=com.mysql.jdbc \
+    --max-pool-size=20 --min-pool-size=5 \
+    --credential-reference={store=ubi-credential-store, alias=gis-remote-e-pw} \
+    --user-name=kanal_e \
+    --xa-datasource-properties=[URL=jdbc:mysql://geotest.bwb.de:3306/KANAL_E, DatabaseName=KANAL_E]
+
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=exception-sorter-class-name, \
+    value="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=valid-connection-checker-class-name,\
+    value="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=check-valid-connection-sql,\
+    value="SELECT 1")
+
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=exception-sorter-class-name, \
+    value="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=valid-connection-checker-class-name,\
+    value="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=check-valid-connection-sql,\
+    value="SELECT 1")
