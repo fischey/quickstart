@@ -1,6 +1,30 @@
 # /subsystem=datasources/jdbc-driver=postgres:add(driver-name=postgres,driver-module-name=org.postgresql,driver-class-name="org.postgresql.Driver",driver-datasource-class-name="org.postgresql.ds.PGSimpleDataSource",driver-xa-datasource-class-name="org.postgresql.xa.PGXADataSource")
 
-xa-data-source add --name=testdb --user-name=postgres --password=password \
---jndi-name=java:/testdb --driver-name=postgres --xa-datasource-properties={url="jdbc:postgres://localhost:5432/testdb"} \
+xa-data-source remove --name=SYNCSOURCE-A-E-DS
+xa-data-source remove --name=SYNCSOURCE-B-E-DS
+
+xa-data-source add --name=SYNCSOURCE-A-E-DS --user-name=postgres --password=password \
+--jndi-name="java:/SYNCSOURCE-A-E-DS" --driver-name=postgres \
+--xa-datasource-properties={URL="jdbc:postgresql://localhost:5432/testdb",DatabaseName="testdb"} \
 --transaction-isolation=TRANSACTION_READ_COMMITTED \
 --max-pool-size=20 --min-pool-size=5
+
+xa-data-source add --name=SYNCSOURCE-B-E-DS --user-name=paul --password=password2 \
+--jndi-name="java:/SYNCSOURCE-B-E-DS" --driver-name=postgres \
+--xa-datasource-properties={url="jdbc:postgresql://localhost:5433/testdb2",DatabaseName="testdb2"} \
+--transaction-isolation=TRANSACTION_READ_COMMITTED \
+--max-pool-size=20 --min-pool-size=5
+
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=exception-sorter-class-name, \
+    value="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=valid-connection-checker-class-name,\
+    value="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-B-E-DS:write-attribute(name=check-valid-connection-sql,\
+    value="SELECT 1")
+
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=exception-sorter-class-name, \
+    value="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=valid-connection-checker-class-name,\
+    value="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker")
+/subsystem=datasources/xa-data-source=SYNCSOURCE-A-E-DS:write-attribute(name=check-valid-connection-sql,\
+    value="SELECT 1")
